@@ -1,0 +1,5 @@
+openssl req -new -x509 \
+    -keyout /etc/lighttpd/certs/lighttpd.pem \
+    -out    /etc/lighttpd/certs/lighttpd.pem \
+    -days 3650 \
+    -nodes
