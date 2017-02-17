@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="raspicon.ico">
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <!-- link href="navbar-static-top.css" rel="stylesheet" -->
+
+    <script src="jquery.min.js"></script>
+
+    <script>
+      function  svrinfo() {
+	$("#div_maint").html("");
+	$.ajax({url: "../cgi-bin/svrinfo.sh", success: function(result){
+	  $("#div_svrinfo").html(result);
+	} });
+      }
+
+      $(document).ready(function(){
+	$("#div_maint_cancel_bttns").hide();
+	$("#div_svrinfo").html("initialised: " + new Date($.now()));
+	svrinfo();
+      });
+
+
+
+      function  shutdown() {
+	$("#div_maint_bttns").fadeOut();
+	$("#div_maint").html("shutting down" + new Date($.now()));
+	$.ajax({url: "../cgi-bin/shutdown.sh", success: function(result){
+	  $("#div_maint").html(result);
+	} });
+	$("#div_maint_cancel_bttns").fadeIn();
+      }
+
+      function  reboot() {
+	$("#div_maint_bttns").fadeOut();
+	$("#div_maint").html(new Date($.now()) + " - rebooting, waiting for svr response");
+	$.ajax({url: "../cgi-bin/reboot.sh", success: function(result){
+	  $("#div_maint").html(result);
+	}});
+	$("#div_maint_cancel_bttns").fadeIn();
+      }
+
+      function  cancel() {
+	$("#div_maint_bttns").fadeIn();
+	$("#div_maint").html("cancelling shutdownn/reboot - may be too late!");
+	$.ajax({url: "../cgi-bin/cancel.sh", success: function(result){
+	  $("#div_maint").html(result);
+	}});
+	$("#div_maint_cancel_bttns").fadeOut();
+      }
+
+      function  restartbluetooth() {
+	$.ajax({url: "../cgi-bin/restartbt.sh", success: function(result){
+	  $("#div_maint").html(result);
+	}});
+      }
+
+
+      function  radio_play() {
+	$.ajax({url: "../cgi-bin/mocp-bbcradio.sh", success: function(result){
+	  $("#div_maint").html(result);
+	}});
+      }
+
+      function  radio_stop() {
+	$.ajax({url: "../cgi-bin/mocp-stop.sh", success: function(result){
+	  $("#div_maint").html(result);
+	}});
+      }
+
+      function wiredconnection() {
+	$("#div_maint").html("")
+	  // validate first
+	  /*
+	     var  bad = false;
+	     var  ipregex = "^(?:(?:25[0-5]2[0-4][0-9][01]?[0-9][0-9]?)\.){3}" +
+	     "(?:25[0-5]2[0-4][0-9][01]?[0-9][0-9]?)$";
+	     if ($("#form_ip").match(ipregex) || (ipregex.match("#form_gw"))) {
+	  //$("#form_ip").closest('.control-group').removeClass('success').addClass('error');
+	  $("#div_form_wiredconnection_info").html("<span class=\"label label-warning\">Invalid IP address<br></span>");
+	  bad = true;
+	  }
+
+	  if (bad) {
+	  return;
+	  }
+
+	  if (document.getElementById('form.form-wiredconnection-input.form_ip').validity.patternMismatch) {
+	  $("#div_maint").html("invalid IP address");
+	  }
+	   */
+
+	  $("#form_wiredconnection").modal('hide');       
+	$.ajax({
+	  type: "POST",
+	  url: "../cgi-bin/wiredconnection.sh",
+	  data: $('form.form-wiredconnection-input').serialize(),
+	  success: function(msg){
+	    $("#div_maint").html(msg)
+	  },
+	  error: function(){
+	    alert("failure");
+	  }
+	});
+      };
+    </script>
+
+    <style>
+body {
+  position: relative;
+}
+		    #div_main { padding-top:60px}
+    </style>
+
+  </head>
+
+  <body data-spy="scroll" data-target=".navbar" data-offset=50>
+    <!-- Static navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+	<div class="navbar-header">
+	  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+	    <span class="sr-only">Toggle navigation</span>
+	    <span class="icon-bar"></span>
+	    <span class="icon-bar"></span>
+	    <span class="icon-bar"></span>
+	  </button>
+	  <a class="navbar-brand" href="#"> <img style="max-height=80px; margin-top: -7px" src=raspberry.png></a>
+	  <button type="button" class="btn btn-primary navbar-btn" onclick="svrinfo()">Refresh</button>
+	</div>
+
+	<div id="navbar" class="navbar-collapse collapse">
+	  <ul class="nav navbar-nav">
+	    <li class="dropdown">
+	      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Motion<span class="caret"></span></a>
+	      <ul class="dropdown-menu">
+		<li><a href=https://192.168.0.151:33173 target="_blank">MotionEye</a> </li>
+		<li class="divider"></li>
+		<li><a href=http://192.168.0.151:8081 target="_blank">RPi3</a></li>
+		<li><a href=http://192.168.0.155:8081 target="_blank">RPi2</a></li>
+		<li><a href=http://192.168.0.156:8081 target="_blank">RPi1</a></li>
+		<li class="divider"></li>
+		<li><a href=http://192.168.0.157:8081 target="_blank">RPiX</a></li>
+		<li><a href=http://192.168.0.150:8081 target="_blank">RPi0</a></li> 
+	      </ul>
+	    </li>
+	    <li class="dropdown">
+	      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Radio<span class="caret"></span></a>
+	      <ul class="dropdown-menu">
+		<li><button type="button" onclick="radio_play()">&#9658</button> <button type="button" onclick="radio_stop()">&#9632</button></li>
+	      </ul>
+	    </li>
+
+	    <li><a href="#" data-toggle="modal" data-target="#form_wiredconnection">Wired Connection</a></li>
+	  </ul>
+
+	  <ul class="nav navbar-nav navbar-right">
+	    <li><div id="div_maint_bttns"><button type="button" class="btn btn-default btn-xs navbar-btn" onclick="restartbluetooth()">Restart BT</button>
+		<button type="button" class="btn btn-danger navbar-btn" data-toggle="modal" data-target="#modal_rebootshutdown">Reboot/Shutdown</button>
+	      </div></li>
+	      <li><div id="div_maint_cancel_bttns"><button type="button" class="btn btn-warning navbar-btn" onclick="cancel()">Cancel Reboot/Shutdown</button> </div></li>
+	  </ul>
+	</div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div id="div_main" class="container-fluid">
+      <div class="modal fade" id="modal_rebootshutdown" role="dialog">
+	<div class="modal-dialog modal-sm">
+	  <div class="modal-content">
+	    <div class="modal-header">
+	      <button type="button" class="close" data-dismiss="modal">&times;</button>
+	      <h4 class="modal-title">WARNING</h4>
+	    </div>
+	    <div class="modal-body">
+	      <p><b><strong>Confirm:</strong></b> proceed with bringing down system</p>
+	    </div>
+	    <div class="modal-footer">
+	      <button type="button" class="btn btn-default" data-dismiss="modal">Abort</button>
+	      <button type="button" class="btn btn-warning" data-dismiss="modal" onclick="reboot()">Reboot</button>
+	      <button type="button" class="btn btn-danger"  data-dismiss="modal" onclick="shutdown()">Shutdown</button>
+	    </div>
+	  </div>
+	</div>
+      </div>
+
+      <div class="modal fade" id="form_wiredconnection" role="dialog">
+	<div class="modal-dialog modal-sm">
+	  <div class="modal-content">
+	    <div class="modal-header">
+	      <a class="close" data-dismiss="modal">×</a>
+	      <h4>Update ethernet IP/route</h4>
+	    </div>
+	    <div>
+	      <form class="form-wiredconnection-input">
+		<fieldset>
+		  <div class="modal-body">
+		    <ul class="nav nav-list">
+		      <li>IP: <input class="form-control required" type="text" maxlength="15" pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$" placeholder="IPv4 address for eth0" name="form_ip"></li>
+		      <li>Gateway: <input class="form-control" type="text" maxlength="15" pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$" placeholder="IPv4 gateway" required name="form_gw"></li>
+		    </ul> 
+		  </div>
+		</fieldset>
+	      </form>
+	      <div id="div_form_wiredconnection_info"></div>
+	    </div>
+	    <div class="modal-footer">
+	      <button class="btn btn-success" id="submit" onclick="wiredconnection()">Submit</button>
+	      <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+	    </div>
+	  </div>
+	</div>
+      </div>
+
+
+      <! -- status update block -->
+      <pre style="font-size:9px"><code><div id="div_maint"></div></code></pre>
+
+      <pre style="overflow-x:scroll; font-size:9px; word-wrap:normal"><div id="div_svrinfo"></div></pre>
+    </div>
+  </body>
+
+  <script src="bootstrap.min.js"></script>
+</html>
