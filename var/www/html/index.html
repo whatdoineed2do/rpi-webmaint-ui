@@ -19,7 +19,7 @@
       <script>
 	function  svrinfo() {
 	    $("#div_maint").html("");
-	    $.ajax({url: "/cgi-bin/svrinfo.sh", success: function(result){
+	    $.ajax({url: "../cgi-bin/svrinfo.sh", success: function(result){
 		$("#div_svrinfo").html(result);
 	    } });
 	}
@@ -35,7 +35,7 @@
 	function  shutdown() {
 	    $("#div_maint_bttns").fadeOut();
 	    $("#div_maint").html("shutting down" + new Date($.now()));
-	    $.ajax({url: "/cgi-bin/shutdown.sh", success: function(result){
+	    $.ajax({url: "../cgi-bin/shutdown.sh", success: function(result){
 		$("#div_maint").html(result);
 	    } });
 	    $("#div_maint_cancel_bttns").fadeIn();
@@ -44,7 +44,7 @@
 	function  reboot() {
 	    $("#div_maint_bttns").fadeOut();
 	    $("#div_maint").html(new Date($.now()) + " - rebooting, waiting for svr response");
-	    $.ajax({url: "/cgi-bin/reboot.sh", success: function(result){
+	    $.ajax({url: "../cgi-bin/reboot.sh", success: function(result){
 		$("#div_maint").html(result);
 	    }});
 	    $("#div_maint_cancel_bttns").fadeIn();
@@ -53,27 +53,68 @@
 	function  cancel() {
 	    $("#div_maint_bttns").fadeIn();
 	    $("#div_maint").html("cancelling shutdownn/reboot - may be too late!");
-	    $.ajax({url: "/cgi-bin/cancel.sh", success: function(result){
+	    $.ajax({url: "../cgi-bin/cancel.sh", success: function(result){
 		$("#div_maint").html(result);
 	    }});
 	    $("#div_maint_cancel_bttns").fadeOut();
 	}
 
-	function  restartbluetooth() {
-	    $.ajax({url: "/cgi-bin/restartbt.sh", success: function(result){
+	function  restartemu() {
+	    $.ajax({url: "../cgi-bin/restartemu.sh", success: function(result){
 		$("#div_maint").html(result);
 	    }});
 	}
 
+	function  restartkodi() {
+	    $.ajax({url: "../cgi-bin/restartkodi.sh", success: function(result){
+		$("#div_maint").html(result);
+	    }});
+	}
+
+	function  restartbluetooth() {
+	    $.ajax({url: "../cgi-bin/restartbt.sh", success: function(result){
+		$("#div_maint").html(result);
+	    }});
+	}
 
 	function  radio_play() {
-	    $.ajax({url: "/cgi-bin/mocp-bbcradio.sh", success: function(result){
+	    $.ajax({url: "../cgi-bin/mocp-bbcradio.sh", success: function(result){
 		$("#div_maint").html(result);
 	    }});
 	}
 
 	function  radio_stop() {
-	    $.ajax({url: "/cgi-bin/mocp-stop.sh", success: function(result){
+	    $.ajax({url: "../cgi-bin/mocp-stop.sh", success: function(result){
+		$("#div_maint").html(result);
+	    }});
+	}
+
+	function  kodi_rescanmusic() {
+	    $.ajax({url: "../cgi-bin/kodi-rescanmusic.sh", success: function(result){
+		$("#div_maint").html(result);
+	    }});
+	}
+
+	function  kodi_refreshmusic() {
+	    $.ajax({url: "../cgi-bin/kodi-refreshmusic.sh", success: function(result){
+		$("#div_maint").html(result);
+	    }});
+	}
+
+	function  kodi_stop_players() {
+	    $.ajax({url: "../cgi-bin/kodi-stop-players.sh", success: function(result){
+		$("#div_maint").html(result);
+	    }});
+	}
+
+	function  kodi_audio_hdmi() {
+	    $.ajax({url: "../cgi-bin/kodi-audio-hdmi.sh", success: function(result){
+		$("#div_maint").html(result);
+	    }});
+	}
+
+	function  kodi_audio_dac() {
+	    $.ajax({url: "../cgi-bin/kodi-audio-dac.sh", success: function(result){
 		$("#div_maint").html(result);
 	    }});
 	}
@@ -99,8 +140,7 @@
 	      <span class="icon-bar"></span>
 	      <span class="icon-bar"></span>
 	    </button>
-	    <a class="navbar-brand" href="#"> <img style="max-height=80px; margin-top: -7px" src=raspberry.png></a>
-	    <button type="button" class="btn btn-primary navbar-btn" onclick="svrinfo()">Refresh</button>
+	    <a class="navbar-brand" href="#"> <img style="max-height=80px; margin-top: -7px" src=raspberry.png></a> <button type="button" class="btn btn-primary navbar-btn" onclick="svrinfo()">Refresh</button>
 	  </div>
 
 	  <div id="navbar" class="navbar-collapse collapse">
@@ -109,6 +149,10 @@
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Motion<span class="caret"></span></a>
 		<ul class="dropdown-menu">
 		    <li><a href=https://192.168.0.151:33173 target="_blank">MotionEye</a> </li>
+		    <li class="divider"></li>
+		    <li><a href=http://192.168.0.207 target="_blank">dafang</a></li>
+		    <li><a href=http://192.168.0.208 target="_blank">dafang1</a></li>
+		    <li><a href=http://192.168.0.209 target="_blank">dafang2</a></li>
 		    <li class="divider"></li>
 		    <li><a href=http://192.168.0.151:8081 target="_blank">RPi3</a></li>
 		    <li><a href=http://192.168.0.155:8081 target="_blank">RPi2</a></li>
@@ -121,12 +165,29 @@
 	      <li class="dropdown">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Radio<span class="caret"></span></a>
 		<ul class="dropdown-menu">
-		    <li><button type="button" onclick="radio_play()">&#9658</button> <button type="button" onclick="radio_stop()">&#9632</button></li>
+		    <li><div class="container-fluid">
+		    <button type="button" onclick="radio_play()">&#9658</button> <button type="button" onclick="radio_stop()">&#9632</button></div></li>
+		</ul>
+	      </li>
+	      <li class="dropdown">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Kodi<span class="caret"></span></a>
+		<ul class="dropdown-menu">
+		    <li><div class="container-fluid"><button type="button" class="btn btn-danger btn-xs navbar-btn" onclick="kodi_stop_players()">Stop Kodi players</button>
+		    <button type="button" class="btn btn-info btn-xs navbar-btn" onclick="kodi_rescanmusic()">Musc: Rescan</button> <button type="button" class="btn btn-info btn-xs navbar-btn" onclick="kodi_refreshmusic()">Musc: Full Refresh</button>
+		    <button type="button" class="btn btn-success btn-xs navbar-btn" onclick="kodi_audio_hdmi()">audio: HDMI</button> <button type="button" class="btn btn-success btn-xs navbar-btn" onclick="kodi_audio_dac()">audio: DAC</button></div></li>
 		</ul>
 	      </li>
 	    </ul>
 	    <ul class="nav navbar-nav navbar-right">
-		<li><div id="div_maint_bttns"><button type="button" class="btn btn-default btn-xs navbar-btn" onclick="restartbluetooth()">Restart BT</button>
+	     <li class="dropdown">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Restart Svcs<span class="caret"></span></a>
+		<ul class="dropdown-menu">
+		    <li><div class="container-fluid"><button type="button" class="btn btn-primary btn-xs navbar-btn" onclick="restartbluetooth()">Restart BT</button>
+		    <button type="button" class="btn btn-success btn-xs navbar-btn" onclick="restartemu()">Restart EmuStation</button>
+		    <button type="button" class="btn btn-danger btn-xs navbar-btn" onclick="restartkodi()">Restart Kodi</button></div></li>
+		</ul>
+	      </li>
+		<li><div id="div_maint_bttns">
 		    <button type="button" class="btn btn-danger navbar-btn" data-toggle="modal" data-target="#modal_rebootshutdown">Reboot/Shutdown</button>
 	    </div></li>
 	    <li><div id="div_maint_cancel_bttns"><button type="button" class="btn btn-warning navbar-btn" onclick="cancel()">Cancel Reboot/Shutdown</button> </div></li>

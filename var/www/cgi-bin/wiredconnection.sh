@@ -137,5 +137,4 @@ fi
 cat <<EOF
 $(ifconfig ${ETH})
 $(route -n)
-$(sudo arp-scan -l -I ${ETH})
 EOF
