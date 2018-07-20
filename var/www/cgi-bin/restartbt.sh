@@ -4,4 +4,4 @@ Content-Type: text/plain
 
 restarting bluetoothd $(date)
 EOF
-sudo /usr/bin/restartbt.sh
+sudo /usr/local/rpi-webmaint/restartbt.sh

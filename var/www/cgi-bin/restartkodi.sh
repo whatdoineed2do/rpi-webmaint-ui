@@ -3,5 +3,5 @@ cat << EOF
 Content-Type: text/plain
 
 killing Kodi $(date)
-$(sudo /usr/bin/restartkodi.sh)
+$(sudo /usr/local/rpi-webmaint/restartkodi.sh)
 EOF

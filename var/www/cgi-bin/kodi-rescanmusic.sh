@@ -3,5 +3,5 @@ cat << EOF
 Content-Type: text/plain
 
 Rescanning Kodi music library
-$(/usr/local/bin/kodi-rescanmusic.sh)
+$(/usr/local/rpi-webmaint/kodi-rescanmusic.sh)
 EOF
