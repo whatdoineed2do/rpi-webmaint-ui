@@ -1,0 +1,10 @@
+[Unit]
+Description=MOCP random play service
+
+[Service]
+ExecStart=/usr/local/bin/mocp-rand.sh start
+ExecStop=/usr/local/bin/mocp-rand.sh kill
+#Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

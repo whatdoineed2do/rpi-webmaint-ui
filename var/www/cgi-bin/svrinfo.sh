@@ -23,4 +23,6 @@ $(free -h)
 
 $(uptime)
 $(ps -e --sort=-pcpu -o pid,user,vsz,rss,pcpu,pmem,cputime,fname | awk '{ if ($1 > 100) print }' | grep -v kworker | grep -v VCH | grep -v kthread | grep -v ksoft | grep -v rcu_she | head -10)
+
+$([ -f /var/log/mocp-rand.log ] && (sudo mocp -i ; systemctl status mocp-rand ; tail -30 /var/log/mocp-rand.log) )
 EOF
