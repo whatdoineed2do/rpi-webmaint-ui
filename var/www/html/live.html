@@ -74,8 +74,21 @@
 	imgh['imageo'] = 0;
 	imgh['imagez'] = 0;
     }
+    function  upd_btn(id_){
+    	if (freeze[id_] == 0) {
+	    $('#btn_' + id_).removeClass("btn-default");
+	    $('#btn_' + id_).addClass("btn-success");
+	}
+	else {
+	    $('#btn_' + id_).removeClass("btn-success");
+	    $('#btn_' + id_).addClass("btn-default");
+	}
+    }
     function  toggle_refresh(id_){
 	freeze[id_] = freeze[id_] == 0 ? 1 : 0;
+
+	upd_btn(id_);
+	
 	<!-- console.log("actv: " + id_ + "=" + (freeze['all'] == 0 && freeze[id_] == 0) ); -->
 	restart();
     }
@@ -140,6 +153,8 @@
 	#div_main { padding-top:60px; padding-left:60px; padding-right:60px}
 
 	}.flex-container {  padding: .vw;  font-size: 0;  display: -ms-flexbox;  -ms-flex-wrap: wrap;  -ms-flex-direction: column;  -webkit-flex-flow: row wrap;  flex-flow: row wrap;  display: -webkit-box;  display: flex;  margin: 0.5vw;}
+
+	.refresh_inactv { background-color: #ccc   }
     </style>
   </head>
 
@@ -158,15 +173,30 @@
 	  <div id="content" class="row">
 	    <div class="col-md-12">
 	      <!-- <div class="flex-item" id="one" onclick="toggle_refresh('one')">loading...</div> -->
-	      <div id="div_image1" onclick="toggle_refresh('image1')">loading...</div>
+	      <div id="div_1" onclick="toggle_refresh('image1')">
+		  <button type="button" id="btn_image1" class="pull-right btn btn-sm btn-block btn-success"></button>
+		  <div id="div_image1"></div>
+	      </div>
 	      <hr class="col-xs-12"></hr>
-	      <div id="div_imagef" onclick="toggle_refresh('imagef')">loading...</div>
+	      <div id="div_f" onclick="toggle_refresh('imagef')">
+		  <button type="button" id="btn_imagef" class="pull-right btn btn-sm btn-block btn-success"></button>
+		  <div id="div_imagef" onclick="toggle_refresh('imagef')"></div>
+	      </div>
 	      <hr class="col-xs-12"></hr>
-	      <div id="div_image2" onclick="toggle_refresh('image2')">loading...</div>
+	      <div id="div_2" onclick="toggle_refresh('image2')">
+		  <button type="button" id="btn_image2" class="pull-right btn btn-sm btn-block btn-success"></button>
+		  <div id="div_image2"></div>
+	      </div>
 	      <hr class="col-xs-12"></hr>
-	      <div id="div_imageo" onclick="toggle_refresh('imageo')">loading...</div>
+	      <div id="div_o" onclick="toggle_refresh('imageo')">
+		  <button type="button" id="btn_imageo" class="pull-right btn btn-sm btn-block btn-success"></button>
+		  <div id="div_imageo"></div>
+	      </div>
 	      <hr class="col-xs-12"></hr>
-	      <div id="div_image3" onclick="toggle_refresh('image3')">loading...</div>
+	      <div id="div_3" onclick="toggle_refresh('image3')">
+		  <button type="button" id="btn_image3" class="pull-right btn btn-sm btn-block btn-success"></button>
+		  <div id="div_image3"></div>
+	      </div>
 	    </div>
 	  </div>
       </div>
