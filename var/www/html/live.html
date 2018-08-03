@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="raspicon.ico">
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <script src="jquery.min.js"></script>
+
+    <script>
+    var  imgh = {};
+
+    function  pull_img(id_, q_, fn_) {
+    	clearTimeout(timers[id_]);
+	if (actv(id_)) {
+	    $.ajax({url: "../cgi-bin/pullimg.sh?" + q_,
+		success: function(data){
+		    $('#div_' + id_).html('<img src="data:image/jpeg;base64,' + data + '" width=100%/>');
+		}
+	    });
+	    $('#div_' + id_).attr("onload", function(){
+		clearTimeout(timers[id_]);
+		timers[id_] = setTimeout(fn_, 1000);
+
+		<!-- expect img loads and constant size between refresh .. this attempts to stop other components on the page jumping around when an image loads -->
+		var  divh = $('#div_' + id_).outerHeight();
+		if (divh > imgh[id_] ) {
+		    imgh[id_] = divh;
+		    $('#div_' + id_).css('min-height', divh + 'px');
+		    //console.log('#div_' + id_ + ' height=' + divh)
+		}
+	});
+	}
+    }
+    function  pull_img1() {
+	pull_img("image1", "d1", pull_img1);
+    }
+    function  pull_imgf() {
+	pull_img("imagef", "f",  pull_imgf);
+    }
+    function  pull_img2() {
+	pull_img("image2", "d2", pull_img2);
+    }
+    function  pull_imgo() {
+	pull_img("imageo", "o",  pull_imgo);
+    }
+    function  pull_img3() {
+	pull_img("image3", "d3", pull_img3);
+    }
+
+
+    var  freeze = {};
+    var  timers = {};
+
+    function  reset(){
+	freeze['all'] = 0;
+	freeze['one'] = 0;
+	freeze['two'] = 0;
+
+	freeze['image1'] = 0;
+	freeze['image2'] = 0;
+	freeze['image3'] = 0;
+	freeze['imagef'] = 0;
+	freeze['imageo'] = 0;
+	freeze['imagez'] = 0;
+
+	imgh['image1'] = 0;
+	imgh['image2'] = 0;
+	imgh['image3'] = 0;
+	imgh['imagef'] = 0;
+	imgh['imageo'] = 0;
+	imgh['imagez'] = 0;
+    }
+    function  toggle_refresh(id_){
+	freeze[id_] = freeze[id_] == 0 ? 1 : 0;
+	<!-- console.log("actv: " + id_ + "=" + (freeze['all'] == 0 && freeze[id_] == 0) ); -->
+	restart();
+    }
+    function  toggle_refreshall(){
+	toggle_refresh('all');
+	$("#navbar-button").html( actv('all') ? "freeze" : "re-start");
+	restart();
+    }
+
+    function  actv(id_){
+	return freeze['all'] == 0 && freeze[id_] == 0;
+    }
+
+    function  log(){
+	console.log("one=" + freeze['one'] + " two=" + freeze['two'] + " all=" + freeze['all'] + " => " + (freeze['all'] == 0 && freeze['one'] == 0));
+        setTimeout(log, 2000);
+    }
+
+    function  pullone(){
+	clearTimeout(timers['one']);
+	if (actv('one')) {
+	    $('#one').html(Date());
+	    timers['one'] = setTimeout(pullone, 1000);
+	}
+    }
+
+    function  pulltwo(){
+	clearTimeout(timers['two']);
+	if (actv('two')) {
+	    $('#two').html(Date());
+	    timers['two'] = setTimeout(pulltwo, 2000);
+	}
+    }
+
+
+    function restart()
+    {
+	<!--
+	pullone();
+	pulltwo();
+	-->
+
+	pull_img1();
+	pull_imgf();
+	pull_img2();
+	pull_imgo();
+	pull_img3();
+    }
+
+
+    $(document).ready(function() {
+	reset();
+	<!-- log(); -->
+	restart();
+    });
+    </script>
+
+    <style>
+	body {
+	  position: relative;
+	}
+	#div_main { padding-top:60px; padding-left:60px; padding-right:60px}
+
+	}.flex-container {  padding: .vw;  font-size: 0;  display: -ms-flexbox;  -ms-flex-wrap: wrap;  -ms-flex-direction: column;  -webkit-flex-flow: row wrap;  flex-flow: row wrap;  display: -webkit-box;  display: flex;  margin: 0.5vw;}
+    </style>
+  </head>
+
+  <body data-spy="scroll" data-target=".navbar" data-offset=10>
+      <!-- Static navbar -->
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+          <div class="navbar-header">
+	    <a class="navbar-brand" href="#"> <img src=raspberry.png height=20px></a>
+	    <button id=navbar-button type="button" class="btn btn-primary navbar-btn"  onclick="toggle_refreshall()">freeze</button>
+          </div>
+        </div>
+      </nav>
+
+       <div id="div_main" class="container-fluid">
+	  <div id="content" class="row">
+	    <div class="col-md-12">
+	      <!-- <div class="flex-item" id="one" onclick="toggle_refresh('one')">loading...</div> -->
+	      <div id="div_image1" onclick="toggle_refresh('image1')">loading...</div>
+	      <hr class="col-xs-12"></hr>
+	      <div id="div_imagef" onclick="toggle_refresh('imagef')">loading...</div>
+	      <hr class="col-xs-12"></hr>
+	      <div id="div_image2" onclick="toggle_refresh('image2')">loading...</div>
+	      <hr class="col-xs-12"></hr>
+	      <div id="div_imageo" onclick="toggle_refresh('imageo')">loading...</div>
+	      <hr class="col-xs-12"></hr>
+	      <div id="div_image3" onclick="toggle_refresh('image3')">loading...</div>
+	    </div>
+	  </div>
+      </div>
+  </body>
+
+  <script src="bootstrap.min.js"></script>
+</html>
