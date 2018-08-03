@@ -1,2 +1,2 @@
-www-data ALL=(ALL) NOPASSWD: /sbin/shutdown, /usr/local/rpi-webmaint/mocp-bbcradio.sh, /usr/bin/mocp, /usr/local/rpi-webmaint/restartbt.sh, /usr/local/rpi-webmaint/restartemu.sh, /usr/local/rpi-webmaint/restartkodi.sh, /usr/local/rpi-webmaint/restartforked-daapd.sh, /usr/local/rpi-webmaint/motioneye-toggle.sh
+www-data ALL=(ALL) NOPASSWD: /sbin/shutdown, /usr/local/rpi-webmaint/mocp-bbcradio.sh, /usr/bin/mocp, /usr/local/rpi-webmaint/restartbt.sh, /usr/local/rpi-webmaint/restartemu.sh, /usr/local/rpi-webmaint/restartkodi.sh, /usr/local/rpi-webmaint/restartforked-daapd.sh, /usr/local/rpi-webmaint/motioneye-toggle.sh, /var/www/cgi-bin/snap.sh
 
