@@ -13,12 +13,12 @@
     <script>
     var  imgh = {};
 
-    function  pull_img(id_, q_, fn_) {
+    function  pull_img(id_, q_, fn_, alttxt_) {
     	clearTimeout(timers[id_]);
 	if (actv(id_)) {
 	    $.ajax({url: "../cgi-bin/pullimg.sh?" + q_,
 		success: function(data){
-		    $('#div_' + id_).html('<img src="data:image/jpeg;base64,' + data + '" width=100%/>');
+		    $('#div_' + id_).html('<img src="data:image/jpeg;base64,' + data + '" width=100% alt="' + alttxt_ + '"/>');
 		}
 	    });
 	    $('#div_' + id_).attr("onload", function(){
@@ -36,19 +36,28 @@
 	}
     }
     function  pull_img1() {
-	pull_img("image1", "d1", pull_img1);
+	pull_img("image1", "d1", pull_img1, "d1");
     }
     function  pull_imgf() {
-	pull_img("imagef", "f",  pull_imgf);
+	pull_img("imagef", "f",  pull_imgf, "f");
     }
     function  pull_img2() {
-	pull_img("image2", "d2", pull_img2);
+	pull_img("image2", "d2", pull_img2, "d2");
     }
     function  pull_imgo() {
-	pull_img("imageo", "o",  pull_imgo);
+	pull_img("imageo", "o",  pull_imgo, "off");
     }
     function  pull_img3() {
-	pull_img("image3", "d3", pull_img3);
+	pull_img("image3", "d3", pull_img3, "d3");
+    }
+    function  pull_imgpz() {
+	pull_img("imagepz", "z", pull_imgpz, "zero");
+    }
+    function  pull_imgp1() {
+	pull_img("imagep1", "1", pull_imgp1, "one");
+    }
+    function  pull_imgp2() {
+	pull_img("imagep2", "2", pull_imgp2, "two");
     }
 
 
@@ -65,14 +74,18 @@
 	freeze['image3'] = 0;
 	freeze['imagef'] = 0;
 	freeze['imageo'] = 0;
-	freeze['imagez'] = 0;
+	freeze['imagepz'] = 0;
+	freeze['imagep1'] = 0;
+	freeze['imagep2'] = 0;
 
 	imgh['image1'] = 0;
 	imgh['image2'] = 0;
 	imgh['image3'] = 0;
 	imgh['imagef'] = 0;
 	imgh['imageo'] = 0;
-	imgh['imagez'] = 0;
+	imgh['imagepz'] = 0;
+	imgh['imagep1'] = 0;
+	imgh['imagep2'] = 0;
     }
     function  upd_btn(id_){
     	if (freeze[id_] == 0) {
@@ -136,6 +149,9 @@
 	pull_img2();
 	pull_imgo();
 	pull_img3();
+	pull_imgpz();
+	pull_imgp1();
+	pull_imgp2();
     }
 
 
@@ -196,6 +212,21 @@
 	      <div id="div_3" onclick="toggle_refresh('image3')">
 		  <button type="button" id="btn_image3" class="pull-right btn btn-xs btn-block btn-success"></button>
 		  <div id="div_image3"></div>
+	      </div>
+	      <hr class="col-xs-12"></hr>
+	      <div id="div_pz" onclick="toggle_refresh('imagepz')">
+		  <button type="button" id="btn_imagepz" class="pull-right btn btn-xs btn-block btn-success"></button>
+		  <div id="div_imagepz"></div>
+	      </div>
+	      <hr class="col-xs-12"></hr>
+	      <div id="div_p1" onclick="toggle_refresh('imagep1')">
+		  <button type="button" id="btn_imagep1" class="pull-right btn btn-xs btn-block btn-success"></button>
+		  <div id="div_imagep1"></div>
+	      </div>
+	      <hr class="col-xs-12"></hr>
+	      <div id="div_p2" onclick="toggle_refresh('imagep2')">
+		  <button type="button" id="btn_imagep2" class="pull-right btn btn-xs btn-block btn-success"></button>
+		  <div id="div_imagep2"></div>
 	      </div>
 	    </div>
 	  </div>
