@@ -3,8 +3,11 @@ Description=MOCP random play service
 
 [Service]
 ExecStart=/usr/local/bin/mocp-rand.sh start
-ExecStop=/usr/local/bin/mocp-rand.sh kill
+ExecStop=/usr/local/bin/mocp-rand.sh stop
 #Restart=on-abort
+#KillMode=none
+TimeoutStopSec=900
+#KillSignal=SIGCHLD
 
 [Install]
 WantedBy=multi-user.target

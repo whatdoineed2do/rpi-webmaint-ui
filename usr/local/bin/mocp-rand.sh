@@ -1,6 +1,6 @@
 #!/bin/bash
 # mon-fri randomly play 0800-2230
-# sat-sun  1300 - 2300
+# sat-sun  1230 - 2300
 #
 # in cron
 #
@@ -10,6 +10,8 @@
 
 ARG0=$(basename $0)
 LOG=~/mocp-rand.log
+
+FDSVR=http://localhost:4689
 
 function _zzz(){
     if [ $# -ne 1 ]; then
@@ -46,16 +48,36 @@ function _play(){
     RUNTIME=$((3000 + RANDOM%900 ))
     echo "$(date +"%Y-%m-%d %H:%M") playing R$R for $RUNTIME seconds" 
 
-    mocp-bbcradio.sh start "R$R" 
+    #mocp-bbcradio.sh start "R$R" 
+
+    echo "retreiving playable files"
+    URIS=$(curl -s "${FDSVR}/api/search?type=tracks&expression=genre+is+%22VIDEO_AUDIO%22" | jq -r '.tracks.items[].uri' | tr '\n' ',' | sed -e "s/,$//")
+
+    echo "cleaning and re-Q"
+    curl -s -X PUT  ${FDSVR}/api/queue/clear
+    curl -s -X POST ${FDSVR}/api/queue/items/add?uris=${URIS} 
+    curl -s -X GET  ${FDSVR}/api/queue | jq -r '.items[].title'
+
+    echo "starting play (${RUNTIME} seconds)"
+    curl -s -X PUT  ${FDSVR}/api/player/shuffle?state=true
+    curl -s -X PUT  ${FDSVR}/api/player/repeat?state=all
+    curl -s -X PUT  ${FDSVR}/api/player/play
 
     _sleep ${RUNTIME} 
-    echo "$(date +"%Y-%m-%d %H:%M") finished playing, killing" 
-    mocp -x
-    killall mocp
+    echo "$(date +"%Y-%m-%d %H:%M") finished playing" 
+    #mocp -x
+    #killall mocp
+
+    curl -s -X PUT ${FDSVR}/api/player/stop
+
+    # is there a bug when stopping ???
+    # pcm512x 1-004c: No SCLK, using BCLK: -2
 }
 
 function _start() {
     ntpd -q -g
+    aplay -Dhw:0,0 /home/pi/sine.wav
+
     while : ; do
 	if [ $(date +%H | sed -e "s/^0*//g") -gt 23 ]; then
 	   echo "$(date +"%Y-%m-%d %H:%M") too late, not starting" 
@@ -69,8 +91,8 @@ function _start() {
 	case $day in
 	    "6"|"7") 
 	       echo "$(date +"%Y-%m-%d %H:%M") wkend handling" 
-		if [ $nowhr -lt 1300 ]; then
-		    WHEN=1300
+		if [ $nowhr -lt 1230 ]; then
+		    WHEN=1230
 		else
 		    if [ $nowhr -lt 1500 ]; then
 			WHEN=1500
@@ -102,28 +124,42 @@ function _start() {
 function _kill() {
     echo "$(date +"%Y-%m-%d %H:%M") stopping mocp" 
 
-    mocp -x
-    killall mocp
-    PIDS=$(ps -ef | grep $(basename $0) | awk '{print $2}')
-    kill $PIDS
+    #mocp -x
+    #killall mocp
+    #PIDS=$(ps -ef | grep $(basename $0) | awk '{print $2}')
+    #kill $PIDS
+    curl -s -X PUT ${FDSVR}/api/player/stop
+
+    THIS_PID=$$
+    KILL_PID=$(pgrep $(basename $0) | grep -v $THIS_PID)
+    echo "killing $KILL_PID"
+    kill $KILL_PID
+    echo "$(date +"%Y-%m-%d %H:%M") $$ stopped" 
 }
 
 function _stop() {
     ZZZ=$((RANDOM%(1200)))
-    echo "$(date +"%Y-%m-%d %H:%M") deferring stop $ZZZ" 
+    echo "$(date +"%Y-%m-%d %H:%M") deferring playback stop $ZZZ" 
     _sleep $ZZZ
 
-    _kill
+    # _kill
+    curl -s -X PUT ${FDSVR}/api/player/stop
+    echo "$(date +"%Y-%m-%d %H:%M") playback stopped" 
+}
+
+function _status() {
+    echo "$(date +"%Y-%m-%d %H:%M") play status=$(curl -s -r -X GET ${FDSVR}/api/player | jq -r .state)"
 }
 
 
-echo "$(date +"%Y-%m-%d %H:%M") - $ARG0: starting" 
+#echo "$(date +"%Y-%m-%d %H:%M") - $ARG0: starting" 
 
 case "$1" in
     "start")  _start;;
     "stop")   _stop;;
     "kill")   _kill;;
+    "status")   _status;;
     "restart")   _stop; start;;
 esac
 
-echo "$(date +"%Y-%m-%d %H:%M") - $ARG0: done" 
+#echo "$(date +"%Y-%m-%d %H:%M") - $ARG0: done" 

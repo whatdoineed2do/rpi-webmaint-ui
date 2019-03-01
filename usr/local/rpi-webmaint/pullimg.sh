@@ -17,5 +17,14 @@ case "$@" in
     o) curl http://192.168.0.156/cgi-bin/snap.sh -o - | base64
 	;;
 
+    z) curl -s http://192.168.0.150/cgi-bin/snap.sh -o - | base64
+    	;;
+
+    2) curl -s http://192.168.0.155/cgi-bin/snap.sh -o - | base64
+	;;
+
+    1) curl -s http://192.168.0.157/cgi-bin/snap.sh -o - | base64
+	;;
+
     *) ;;
 esac

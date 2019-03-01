@@ -24,5 +24,9 @@ $(free -h)
 $(uptime)
 $(ps -e --sort=-pcpu -o pid,user,vsz,rss,pcpu,pmem,cputime,fname | awk '{ if ($1 > 100) print }' | grep -v kworker | grep -v VCH | grep -v kthread | grep -v ksoft | grep -v rcu_she | head -10)
 
-$([ -f /var/log/mocp-rand.log ] && (sudo mocp -i ; systemctl status mocp-rand ; tail -30 /var/log/mocp-rand.log) )
+$(systemctl status kodi)
+$(systemctl status forked-daapd)
+
+$(systemctl is-enabled forked-daapd-headphones 2>&1 > /dev/null; [ $? == 0 ] && (systemctl status forked-daapd-headphones ; systemctl status mocp-rand ; ./journalctl.sh ; /usr/local/bin/mocp-rand.sh status) )
+
 EOF

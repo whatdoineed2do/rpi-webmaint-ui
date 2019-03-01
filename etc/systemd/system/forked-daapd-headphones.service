@@ -1,0 +1,18 @@
+[Unit]
+Description=DAAP/DACP (iTunes) and MPD server, supporting AirPlay and Spotify
+Documentation=man:forked-daapd(8)
+After=network.target sound.target remote-fs.target pulseaudio.service avahi-daemon.service
+
+[Service]
+ExecStart=/usr/sbin/forked-daapd -f -c /etc/forked-daapd-headphones.conf
+MemoryMax=192M
+
+# Restart, but not more than once every 10 minutes
+Restart=on-failure
+StartLimitBurst=2
+StartLimitInterval=600
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=mocp-rand.service
+
