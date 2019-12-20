@@ -1,0 +1,45 @@
+# interfaces(5) file used by ifup(8) and ifdown(8)
+
+# Please note that this file is written to be used with dhcpcd
+# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
+
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
+
+auto lo
+iface lo inet loopback
+
+# confirm status at
+# $ cat /proc/net/bonding/bond0 
+
+auto eth0
+allow-hotplug eth0
+iface eth0 inet manual
+    bond-master bond0
+    bond-mode active-backup
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet manual 
+    bond-master bond0
+    bond-mode active-backup
+    #wireless-power off
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+# need to add 'denyinterfaces bond0 eth0 wlan0' in dhcpc.conf???
+# need to have "options bonding fail_over_mac=active mode=active-backup primary=eth0 primary_reselect=always"
+#
+auto bond0
+iface bond0 inet static
+    bond-slaves	none
+    bond-primary eth0
+    bond-mode active-backup
+    bond-miimon	200
+    bond-fail_over_mac active
+    bond-primary_reselect always
+    bond-updelay 200
+    bond-downdelay 0
+    address	192.168.0.254
+    netmask	255.255.255.0
+    gateway	192.168.0.1
+    dns-nameservers	8.8.4.4
