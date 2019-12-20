@@ -61,6 +61,7 @@ function _play(){
     echo "starting play (${RUNTIME} seconds)"
     curl -s -X PUT  ${FDSVR}/api/player/shuffle?state=true
     curl -s -X PUT  ${FDSVR}/api/player/repeat?state=all
+    curl -s -X PUT "${FDSVR}/api/outputs/0" --data "{\"selected\":true, \"volume\": 100}"
     curl -s -X PUT  ${FDSVR}/api/player/play
 
     _sleep ${RUNTIME} 
@@ -87,26 +88,19 @@ function _start() {
 	day=$(date +%u)
 	now=$(date +%H%M)
 	nowhr=$(date +%k)
+	WHEN=
 
 	case $day in
 	    "6"|"7") 
 	       echo "$(date +"%Y-%m-%d %H:%M") wkend handling" 
-		if [ $nowhr -lt 1230 ]; then
-		    WHEN=1230
-		else
-		    if [ $nowhr -lt 1500 ]; then
-			WHEN=1500
-		    else
-			WHEN=1900
-		    fi
-	       fi
+		if [ $nowhr -lt 1040 ]; then
+		    WHEN=1040
+		fi
 	    ;;
 
 	    *)  
-		if [ $nowhr -lt 1040 ] ; then
-		    WHEN=1040
-		else
-		    WHEN=1630
+		if [ $nowhr -lt 1010 ] ; then
+		    WHEN=1010
 		fi
 	    ;;
 	esac
