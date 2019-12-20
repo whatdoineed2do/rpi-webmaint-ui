@@ -6,7 +6,7 @@ ExecStart=/usr/local/bin/mocp-rand.sh start
 ExecStop=/usr/local/bin/mocp-rand.sh stop
 #Restart=on-abort
 #KillMode=none
-TimeoutStopSec=900
+TimeoutStopSec=60
 #KillSignal=SIGCHLD
 
 [Install]
