@@ -12,6 +12,7 @@ ARG0=$(basename $0)
 LOG=~/mocp-rand.log
 
 FDSVR=http://localhost:4689
+FDSVR=http://localhost:3689
 
 function _zzz(){
     if [ $# -ne 1 ]; then
@@ -61,7 +62,9 @@ function _play(){
     echo "starting play (${RUNTIME} seconds)"
     curl -s -X PUT  ${FDSVR}/api/player/shuffle?state=true
     curl -s -X PUT  ${FDSVR}/api/player/repeat?state=all
-    curl -s -X PUT "${FDSVR}/api/outputs/0" --data "{\"selected\":true, \"volume\": 100}"
+
+    OUTPUT_HEADPHONE_ID=$(curl -s -X GET  ${FDSVR}/api/outputs | jq '.outputs[] | select(.name | contains("headphones")) | .id' | tr -d '"')
+    curl -s -X PUT "${FDSVR}/api/outputs/${OUTPUT_HEADPHONE_ID}" --data "{\"selected\":true, \"volume\": 100}"
     curl -s -X PUT  ${FDSVR}/api/player/play
 
     _sleep ${RUNTIME} 
@@ -76,7 +79,7 @@ function _play(){
 }
 
 function _start() {
-    ntpd -q -g
+    [ -x /usr/sbin/ntpd ] && /usr/sbin/ntpd -q -g
     aplay -Dhw:0,0 /home/pi/sine.wav
 
     while : ; do
