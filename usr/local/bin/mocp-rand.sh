@@ -80,6 +80,7 @@ function _play(){
 
 function _start() {
     [ -x /usr/sbin/ntpd ] && /usr/sbin/ntpd -q -g
+    amixer cset numid=3 1
     aplay -Dhw:0,0 /home/pi/sine.wav
 
     while : ; do
